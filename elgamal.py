@@ -1,4 +1,6 @@
 import random
+import ast
+
 from Crypto.Cipher import DES
 
 
@@ -10,6 +12,7 @@ class ElgamalModule(object):
         self.private_key=0
         self.e=0
         self.public_key={}
+        self.elgamal_ciphertext={}
 
     def millerRabin(self,p,iterations):
         if p ==2:
@@ -84,7 +87,7 @@ class ElgamalModule(object):
 
     def computeE(self):
         if self.e==0:
-            self.e=pow(self.getPrimitiveRoot(),self.getPrivateKey(),self.getLargePrime())
+            self.e=self.powmod(self.getPrimitiveRoot(),self.getPrivateKey(),self.getLargePrime())
         return self.e
 
     def getPublicKey(self):
@@ -94,32 +97,54 @@ class ElgamalModule(object):
             self.public_key["e"]=self.computeE()
         return self.public_key
 
+    def elgamalEncrypt(self,message):
+        if len(self.elgamal_ciphertext)==0:
+            k=random.randint(2, 100)
+            pk=self.getPublicKey()
+            c1= self.powmod(pk["primitive_element"],k,self.getLargePrime())
+            c2= self.powmod(message*pk["e"],k,self.getLargePrime())
+            self.elgamal_ciphertext["c1"]=c1
+            self.elgamal_ciphertext["c2"]=c2
+        return self.elgamal_ciphertext
 
 
 
 
 
-em= ElgamalModule()
+# em= ElgamalModule()
 
-print "p = "+ str(em.getLargePrime()) # set the a random largeprime number and returns the large prime
-print "g = "+ str(em.getPrimitiveRoot()) # gets the primitive root of the large prime number that has already been set, if no large prime number exsists yet, then the large prime would be created and the smallest primitive root of the large prime would be found
-print "private key = "+ str(em.getPrivateKey()) # gets the private key where 1 <private_key < large_prime-1, if large prime does not yet exist it would be created and used acordingly
-print "e = "+ str(em.computeE())
-print "public key = "+ str(em.getPublicKey())
+# print "p = "+ str(em.getLargePrime()) # set the a random largeprime number and returns the large prime
+# print "g = "+ str(em.getPrimitiveRoot()) # gets the primitive root of the large prime number that has already been set, if no large prime number exsists yet, then the large prime would be created and the smallest primitive root of the large prime would be found
+# print "private key = "+ str(em.getPrivateKey()) # gets the private key where 1 <private_key < large_prime-1, if large prime does not yet exist it would be created and used acordingly
+# print "e = "+ str(em.computeE())
+# print "public key = "+ str(em.getPublicKey())
 
-des = DES.new('01234567', DES.MODE_ECB)
-text = str(em.getPrivateKey())
+# des = DES.new('01234567', DES.MODE_ECB) # secrete key
+# text = str(em.getPrivateKey())
 
-# text="123456789"
-multiplier=1
-while True:
-    if len(text)<8*multiplier:
-        text=text+" " * ((8*multiplier) - len(text))
-        break
-    multiplier=multiplier+1
+# # text="123456789"
+# multiplier=1
+# while True:
+#     if len(text)<8*multiplier:
+#         text=text+" " * ((8*multiplier) - len(text))
+#         break
+#     multiplier=multiplier+1
+
+# cipher_text = des.encrypt(text)
+# file = open("privatekey.dat","w")
+# file.write(cipher_text)
+# file.close()
+# file = open("publickey.dat","w")
+# file.write(str(em.getPublicKey()))
+# file.close()
+
+# file = open("publickey.dat","r")
+# pk=file.readline()
+# file.close()
+# pk=ast.literal_eval(pk) # https://stackoverflow.com/questions/988228/convert-a-string-representation-of-a-dictionary-to-a-dictionary
+# print pk["large_prime"]
 
 
-cipher_text = des.encrypt(text)
 
-print "cipher text from DES = "+ cipher_text
-print "deciphered text from DES = "+ des.decrypt(cipher_text)
+# print "cipher text from DES = "+ cipher_text
+# print "deciphered text from DES = "+ des.decrypt(cipher_text)
