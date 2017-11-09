@@ -95,14 +95,9 @@ class ElgamalModule(object):
         return self.public_key
 
 
-des = DES.new('01234567', DES.MODE_ECB)
-text = 'abcdefgh'
 
-cipher_text = des.encrypt(text)
 
-print cipher_text
 
-print  des.decrypt(cipher_text)
 
 em= ElgamalModule()
 
@@ -112,5 +107,19 @@ print "private key = "+ str(em.getPrivateKey()) # gets the private key where 1 <
 print "e = "+ str(em.computeE())
 print "public key = "+ str(em.getPublicKey())
 
+des = DES.new('01234567', DES.MODE_ECB)
+text = str(em.getPrivateKey())
+
+# text="123456789"
+multiplier=1
+while True:
+    if len(text)<8*multiplier:
+        text=text+" " * ((8*multiplier) - len(text))
+        break
+    multiplier=multiplier+1
 
 
+cipher_text = des.encrypt(text)
+
+print "cipher text from DES = "+ cipher_text
+print "deciphered text from DES = "+ des.decrypt(cipher_text)
