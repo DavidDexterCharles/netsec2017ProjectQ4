@@ -94,7 +94,6 @@ class ElgamalModule(object):
             self.public_key["e"]=self.computeE()
         return self.public_key
 
-        # return
 
 des = DES.new('01234567', DES.MODE_ECB)
 text = 'abcdefgh'
@@ -107,11 +106,11 @@ print  des.decrypt(cipher_text)
 
 em= ElgamalModule()
 
-print em.getLargePrime() # set the a random largeprime number and returns the large prime
-em.getPublicKey()
-print em.getPrimitiveRoot() # gets the primitive root of the large prime number that has already been set, if no large prime number exsists yet, then the large prime would be created and the smallest primitive root of the large prime would be found
-print em.getPrivateKey()# gets the private key where 1 <private_key < large_prime-1, if large prime does not yet exist it would be created and used acordingly
-
+print "p = "+ str(em.getLargePrime()) # set the a random largeprime number and returns the large prime
+print "g = "+ str(em.getPrimitiveRoot()) # gets the primitive root of the large prime number that has already been set, if no large prime number exsists yet, then the large prime would be created and the smallest primitive root of the large prime would be found
+print "private key = "+ str(em.getPrivateKey()) # gets the private key where 1 <private_key < large_prime-1, if large prime does not yet exist it would be created and used acordingly
+print "e = "+ str(em.computeE())
+print "public key = "+ str(em.getPublicKey())
 
 
 
