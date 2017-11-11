@@ -7,12 +7,30 @@ from Crypto.Cipher import DES
 class ElgamalModule(object):
     
     def __init__(self):
-        self.large_prime=0
-        self.primitive_element=0
-        self.private_key=0
+        self.large_prime=0#13
+        self.primitive_element=0#2#0
+        self.private_key=0#9
         self.e=0
         self.public_key={}
         self.elgamal_ciphertext={}
+
+    def encode(self,text ):
+        result = 0
+        for c in text :
+            result = 256* result + ord ( c )
+            # print result
+            # a=input("enter val")
+        return result
+
+    def decode (self,number ):
+        number = int ( number )
+        result = ""
+        while number !=0:
+            result = chr ( ( number % 256) ) + result
+            number //= 256
+        return result
+
+
 
     def millerRabin(self,p,iterations):
         if p ==2:
@@ -96,17 +114,34 @@ class ElgamalModule(object):
             self.public_key["primitive_element"]=self.getPrimitiveRoot()
             self.public_key["e"]=self.computeE()
         return self.public_key
+    
+    def getCiphertext(self):
+        return self.elgamal_ciphertext
+
 
     def elgamalEncrypt(self,message):
         if len(self.elgamal_ciphertext)==0:
-            k=random.randint(2, 100)
-            pk=self.getPublicKey()
-            c1= self.powmod(pk["primitive_element"],k,self.getLargePrime())
-            c2= self.powmod(message*pk["e"],k,self.getLargePrime())
+            k=10#random.randint(2, 100)#10
+            p=self.getLargePrime()
+            g=self.getPublicKey()["primitive_element"]
+            e=self.getPublicKey()["e"]
+            c1= self.powmod(g,k,p)
+            # print "message = ",message
+            c2=((message%p)*self.powmod(e,k,p))%p
+            # print "c2 value ", c2
             self.elgamal_ciphertext["c1"]=c1
             self.elgamal_ciphertext["c2"]=c2
         return self.elgamal_ciphertext
 
+    def elgamalDecrypt(self,cipher,privatekey,publickey):
+        c1=cipher["c1"]
+        c2=cipher["c2"]
+        p=int(publickey["large_prime"])
+        d=int(privatekey)
+        k = self.powmod(c1,d,p)
+        print "value of k: ", k
+        plaintext=((cipher["c2"]%p)*(self.powmod(k,p-2,p)))%p
+        return plaintext
 
 
 
