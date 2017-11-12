@@ -20,6 +20,8 @@ class ElgamalModule(object):
         result = 0
         for c in text :
             result = 256* result + ord ( c )
+            # print result
+            # a=input("enter val")
         return result
 
     def decode (self,number ):
@@ -120,13 +122,13 @@ class ElgamalModule(object):
 
 
     def elgamalEncrypt(self,message):
-        
-        k=random.randint(2, 100)
+        # if len(self.elgamal_ciphertext)==0:
+        k=random.randint(2, 100)#10
         p=self.getLargePrime()
         g=self.getPublicKey()["primitive_element"]
         e=self.getPublicKey()["e"]
         c1= self.powmod(g,k,p)
-        # print "message = ",message
+        print "message = ",message
         c2=((message%p)*self.powmod(e,k,p))%p
         # print "c2 value ", c2
         self.elgamal_ciphertext["c1"]=c1
@@ -145,3 +147,44 @@ class ElgamalModule(object):
         # print "decrypt c2 value ", c2
         plaintext=((cipher["c2"]%p)*(self.powmod(k,p-2,p)))%p
         return plaintext
+
+
+
+
+# em= ElgamalModule()
+
+# print "p = "+ str(em.getLargePrime()) # set the a random largeprime number and returns the large prime
+# print "g = "+ str(em.getPrimitiveRoot()) # gets the primitive root of the large prime number that has already been set, if no large prime number exsists yet, then the large prime would be created and the smallest primitive root of the large prime would be found
+# print "private key = "+ str(em.getPrivateKey()) # gets the private key where 1 <private_key < large_prime-1, if large prime does not yet exist it would be created and used acordingly
+# print "e = "+ str(em.computeE())
+# print "public key = "+ str(em.getPublicKey())
+
+# des = DES.new('01234567', DES.MODE_ECB) # secrete key
+# text = str(em.getPrivateKey())
+
+# # text="123456789"
+# multiplier=1
+# while True:
+#     if len(text)<8*multiplier:
+#         text=text+" " * ((8*multiplier) - len(text))
+#         break
+#     multiplier=multiplier+1
+
+# cipher_text = des.encrypt(text)
+# file = open("privatekey.dat","w")
+# file.write(cipher_text)
+# file.close()
+# file = open("publickey.dat","w")
+# file.write(str(em.getPublicKey()))
+# file.close()
+
+# file = open("publickey.dat","r")
+# pk=file.readline()
+# file.close()
+# pk=ast.literal_eval(pk) # https://stackoverflow.com/questions/988228/convert-a-string-representation-of-a-dictionary-to-a-dictionary
+# print pk["large_prime"]
+
+
+
+# print "cipher text from DES = "+ cipher_text
+# print "deciphered text from DES = "+ des.decrypt(cipher_text)
